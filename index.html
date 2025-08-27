@@ -161,6 +161,7 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script>
       const { useEffect, useMemo, useState } = React;
+      const FORM_SRC = 'https://docs.google.com/forms/d/e/REPLACE_WITH_YOUR_FORM_ID/viewform?embedded=true';
 
       function useHashRoute() {
         const [hash, setHash] = useState(() => window.location.hash || '#/');
@@ -278,16 +279,6 @@
                 React.createElement(Tile, { emoji: '👶', title: 'Child Savings Plans' }),
                 React.createElement(Tile, { emoji: '👴', title: 'Retirement Plans' }),
                 React.createElement(Tile, { emoji: '🏠', title: 'Home Insurance' })
-              ),
-              React.createElement('div', { id: 'contact', className: 'card form-section' },
-                React.createElement('h2', null, 'Get in touch'),
-                React.createElement('div', { className: 'form-embed' },
-                  React.createElement('iframe', {
-                    src: 'https://docs.google.com/forms/d/e/REPLACE_WITH_YOUR_FORM_ID/viewform?embedded=true',
-                    width: '100%', height: '100%', frameBorder: '0', marginHeight: '0', marginWidth: '0',
-                    title: 'Contact form'
-                  }, 'Loading…')
-                )
               )
             )
           )
@@ -295,51 +286,13 @@
       }
 
       function Login() {
-        const [email, setEmail] = useState('');
-        const [password, setPassword] = useState('');
-        const [loading, setLoading] = useState(false);
-        const [error, setError] = useState('');
-        const [success, setSuccess] = useState('');
-        async function submit(e) {
-          e.preventDefault();
-          setError('');
-          setSuccess('');
-          setLoading(true);
-          try {
-            const res = await fetch('http://127.0.0.1:8000/api/login', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email, password })
-            });
-            const data = await res.json();
-            if (!res.ok) {
-              throw new Error(data?.detail || 'Login failed');
-            }
-            setSuccess('Login successful');
-            setTimeout(() => { window.location.hash = '#/'; }, 700);
-          } catch (err) {
-            setError(err.message || 'Something went wrong');
-          } finally {
-            setLoading(false);
-          }
-        }
         return (
           React.createElement('main', null,
             React.createElement('div', { className: 'container' },
               React.createElement('div', { className: 'login-wrap card' },
-                React.createElement('h2', null, 'Login'),
-                error ? React.createElement('div', { className: 'muted', style: { color: '#dc2626', marginBottom: 8 } }, error) : null,
-                success ? React.createElement('div', { className: 'muted', style: { color: '#16a34a', marginBottom: 8 } }, success) : null,
-                React.createElement('form', { onSubmit: submit },
-                  React.createElement('label', { className: 'field' },
-                    React.createElement('span', null, 'Email'),
-                    React.createElement('input', { className: 'input', type: 'email', placeholder: 'you@example.com', value: email, onChange: (e) => setEmail(e.target.value) })
-                  ),
-                  React.createElement('label', { className: 'field' },
-                    React.createElement('span', null, 'Password'),
-                    React.createElement('input', { className: 'input', type: 'password', placeholder: '••••••••', value: password, onChange: (e) => setPassword(e.target.value) })
-                  ),
-                  React.createElement('button', { className: 'btn-primary', type: 'submit', disabled: loading }, loading ? 'Signing in…' : 'Continue')
+                React.createElement('h2', null, 'Contact / Sign in'),
+                React.createElement('div', { className: 'form-embed', style: { paddingTop: '140%' } },
+                  React.createElement('iframe', { src: FORM_SRC, title: 'Contact form (login)', frameBorder: '0', marginHeight: '0', marginWidth: '0' }, 'Loading…')
                 )
               )
             )
@@ -348,7 +301,6 @@
       }
 
       function App() {
-        const formSrc = 'https://docs.google.com/forms/d/e/REPLACE_WITH_YOUR_FORM_ID/viewform?embedded=true';
         const route = useHashRoute();
         const page = route === '/login' ? React.createElement(Login) : React.createElement(Home);
         const [showForm, setShowForm] = React.useState(false);
@@ -364,7 +316,7 @@
           // Clicking backdrop closes
           if (modal) modal.onclick = (ev) => { if (ev.target === modal) setShowForm(false); };
           // Set iframe src (once)
-          if (iframe && !iframe.src) iframe.src = formSrc;
+          if (iframe && !iframe.src) iframe.src = FORM_SRC;
           return () => window.removeEventListener('keydown', esc);
         }, []);
 
