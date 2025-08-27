@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Insurance Marketplace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #ffffff;
+        --text: #0f172a; /* slate-900 */
+        --muted: #334155; /* slate-700 */
+        --border: #e2e8f0; /* slate-200 */
+        --search-bg: #f3f4f6; /* gray-100 */
+        --search-text: #111827; /* gray-900 */
+        --accent: #0ea5e9; /* sky-500 */
+      }
+      * { box-sizing: border-box; }
+      html, body, #root { height: 100%; }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: var(--bg);
+        color: var(--text);
+      }
+      a { color: inherit; text-decoration: none; }
+      .container { max-width: 960px; margin: 0 auto; padding: 24px; }
+      header {
+        border-bottom: 1px solid var(--border);
+        position: sticky; top: 0; background: var(--bg); z-index: 10;
+      }
+      .nav {
+        display: flex; align-items: center; justify-content: space-between; gap: 16px;
+        padding: 12px 0;
+      }
+      .brand { font-weight: 700; font-size: 18px; }
+      .nav a { padding: 8px 12px; border-radius: 8px; }
+      .nav a.active { background: var(--search-bg); }
+
+      .search-wrap { margin-top: 56px; }
+      .search {
+        display: flex; align-items: center; gap: 12px;
+        background: #1f2937; /* light black-ish (gray-800) */
+        color: #f9fafb; /* gray-50 */
+        padding: 14px 16px;
+        border-radius: 12px;
+        border: 1px solid #111827; /* gray-900 */
+      }
+      .search input {
+        flex: 1;
+        background: transparent;
+        border: 0;
+        outline: none;
+        color: #f9fafb;
+        font-size: 16px;
+      }
+      .search button {
+        background: var(--accent);
+        color: white;
+        border: 0; border-radius: 10px;
+        padding: 10px 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .card { border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+      .muted { color: var(--muted); }
+
+      /* Login */
+      .login-wrap { max-width: 420px; margin: 56px auto; }
+      .field { display: grid; gap: 8px; margin-bottom: 14px; }
+      .input {
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-size: 15px;
+      }
+      .btn-primary {
+        background: var(--accent); color: white; border: 0;
+        padding: 12px 16px; border-radius: 10px; width: 100%;
+        font-weight: 600; cursor: pointer;
+      }
+
+      /* Social footer */
+      footer { border-top: 1px solid var(--border); margin-top: 56px; }
+      .social { display: flex; align-items: center; gap: 12px; padding: 16px 0; }
+      .social a { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; color: var(--muted); }
+      .social a:hover { color: var(--accent); background: var(--search-bg); }
+
+      /* Hero and tiles */
+      .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 28px; align-items: center; margin-top: 28px; }
+      .hero h1 { font-size: 40px; line-height: 1.1; margin: 0 0 12px; font-weight: 700; }
+      .hero .sub { color: var(--muted); font-size: 16px; }
+      .stats { display: flex; gap: 24px; margin-top: 20px; }
+      .stat { display: flex; align-items: center; gap: 10px; }
+      .stat .badge { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--search-bg); }
+      .banner { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: linear-gradient(135deg,#0ea5e9 0%, #164e63 100%); color: #e6f6ff; height: 220px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+
+      .tiles { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 16px; margin-top: 28px; }
+      @media (max-width: 960px){ .hero{ grid-template-columns: 1fr; } .tiles{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
+      .tile { border: 1px solid var(--border); border-radius: 12px; background: #fff; padding: 14px; text-align: center; cursor: pointer; transition: box-shadow .15s ease, transform .15s ease; }
+      .tile:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.06); transform: translateY(-2px); }
+      .tile .emoji { font-size: 24px; margin-bottom: 8px; }
+      .tile .title { font-size: 14px; color: var(--text); }
+
+      /* Simple slider */
+      .slider { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); height: 220px; }
+      .slides { width: 100%; height: 100%; display: flex; transition: transform .5s ease; }
+      .slide { min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #e6f6ff; background: linear-gradient(135deg,#0ea5e9 0%, #164e63 100%); padding: 0 16px; text-align: center; }
+      .dots { position: absolute; left: 0; right: 0; bottom: 10px; display: flex; gap: 6px; justify-content: center; }
+      .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.45); }
+      .dot.active { background: #fff; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <footer>
+      <div class="container social">
+        <a href="https://www.instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.056 1.97.24 2.427.403a4.92 4.92 0 0 1 1.787 1.153 4.92 4.92 0 0 1 1.153 1.787c.163.457.347 1.257.403 2.427.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.056 1.17-.24 1.97-.403 2.427a4.92 4.92 0 0 1-1.153 1.787 4.92 4.92 0 0 1-1.787 1.153c-.457.163-1.257.347-2.427.403-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.056-1.97-.24-2.427-.403a4.92 4.92 0 0 1-1.787-1.153 4.92 4.92 0 0 1-1.153-1.787c-.163-.457-.347-1.257-.403-2.427C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.056-1.17.24-1.97.403-2.427A4.92 4.92 0 0 1 3.789 2.936 4.92 4.92 0 0 1 5.576 1.783c.457-.163 1.257-.347 2.427-.403C9.27 1.322 9.65 1.31 12 1.31v.853zM12 0C8.741 0 8.332.013 7.053.072 5.775.131 4.897.322 4.158.6a6.9 6.9 0 0 0-2.5 1.63A6.9 6.9 0 0 0 .028 4.73c-.278.739-.469 1.617-.528 2.895C-.559 8.904-.572 9.313-.572 12c0 2.687.013 3.096.072 4.375.059 1.278.25 2.156.528 2.895.3.8.7 1.478 1.63 2.5a6.9 6.9 0 0 0 2.5 1.63c.739.278 1.617.469 2.895.528C8.332 24.013 8.741 24 12 24s3.668.013 4.947-.072c1.278-.059 2.156-.25 2.895-.528a6.9 6.9 0 0 0 2.5-1.63 6.9 6.9 0 0 0 1.63-2.5c.278-.739.469-1.617.528-2.895.059-1.279.072-1.688.072-4.947s-.013-3.668-.072-4.947c-.059-1.278-.25-2.156-.528-2.895a6.9 6.9 0 0 0-1.63-2.5 6.9 6.9 0 0 0-2.5-1.63c-.739-.278-1.617-.469-2.895-.528C15.668.013 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a3.999 3.999 0 1 1 0-7.998 3.999 3.999 0 0 1 0 7.998zM18.406 4.594a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/>
+          </svg>
+        </a>
+        <a href="https://www.facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M22.675 0h-21.35C.595 0 0 .595 0 1.326v21.348C0 23.405.595 24 1.326 24h11.495v-9.294H9.691v-3.622h3.13V8.413c0-3.1 1.894-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.796.715-1.796 1.764v2.313h3.59l-.467 3.622h-3.123V24h6.116C23.405 24 24 23.405 24 22.674V1.326C24 .595 23.405 0 22.675 0z"/>
+          </svg>
+        </a>
+      </div>
+    </footer>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script>
+      const { useEffect, useMemo, useState } = React;
+
+      function useHashRoute() {
+        const [hash, setHash] = useState(() => window.location.hash || '#/');
+        useEffect(() => {
+          const onHash = () => setHash(window.location.hash || '#/');
+          window.addEventListener('hashchange', onHash);
+          return () => window.removeEventListener('hashchange', onHash);
+        }, []);
+        return hash.replace(/^#/, '') || '/';
+      }
+
+      function Nav() {
+        const route = useHashRoute();
+        return (
+          React.createElement('header', null,
+            React.createElement('div', { className: 'container nav' },
+              React.createElement('div', { className: 'brand' }, 'InsureX'),
+              React.createElement('nav', null,
+                React.createElement('a', { href: '#/', className: route === '/' ? 'active' : '' }, 'Home'),
+                React.createElement('a', { href: '#/login', className: route === '/login' ? 'active' : '' }, 'Login')
+              )
+            )
+          )
+        );
+      }
+
+      function Tile(props){
+        return React.createElement('div', { className: 'tile', role: 'button', tabIndex: 0 },
+          React.createElement('div', { className: 'emoji' }, props.emoji),
+          React.createElement('div', { className: 'title' }, props.title)
+        );
+      }
+
+      function Slider(props){
+        const { items, intervalMs = 3000 } = props;
+        const [index, setIndex] = React.useState(0);
+        React.useEffect(() => {
+          if (!items || items.length === 0) return;
+          const id = setInterval(() => {
+            setIndex(i => (i + 1) % items.length);
+          }, intervalMs);
+          return () => clearInterval(id);
+        }, [items, intervalMs]);
+        const translateX = `translateX(-${index * 100}%)`;
+        return (
+          React.createElement('div', { className: 'slider', role: 'region', 'aria-label': 'Insurance highlights' },
+            React.createElement('div', { className: 'slides', style: { transform: translateX } },
+              items.map((it, i) => (
+                React.createElement('div', { key: i, className: 'slide' }, it)
+              ))
+            ),
+            React.createElement('div', { className: 'dots' },
+              items.map((_, i) => (
+                React.createElement('span', { key: i, className: 'dot' + (i === index ? ' active' : '') })
+              ))
+            )
+          )
+        );
+      }
+
+      function Home() {
+        const [q, setQ] = useState('');
+        function search(e) { e.preventDefault(); alert('Searching for: ' + q); }
+        const sliderItems = [
+          '🛡️ Term plan starting at ₹700/m',
+          '❤️ Health Insurance for individuals & families',
+          '🚗 Car Insurance with instant policy',
+          '🛵 2 Wheeler Insurance in minutes',
+          '✈️ Travel Insurance for your trips',
+          '🏠 Home Insurance for peace of mind',
+          '👴 Retirement Plans to secure future'
+        ];
+        return (
+          React.createElement('main', null,
+            React.createElement('div', { className: 'container' },
+              React.createElement('div', { className: 'hero' },
+                React.createElement('div', null,
+                  React.createElement('h1', null, "Let's find you the ", React.createElement('span', { style: { color: '#0ea5e9' } }, 'Best Insurance')),
+                  React.createElement('div', { className: 'sub' }, 'Compare plans across insurers and buy in minutes'),
+                  React.createElement('div', { className: 'search-wrap' },
+                    React.createElement('form', { className: 'search', onSubmit: search },
+                      React.createElement('span', { className: 'muted' }, '🔎'),
+                      React.createElement('input', {
+                        placeholder: 'Search insurance plans, insurers, riders…',
+                        value: q,
+                        onChange: (e) => setQ(e.target.value)
+                      }),
+                      React.createElement('button', { type: 'submit' }, 'Search')
+                    )
+                  ),
+                  React.createElement('div', { className: 'stats' },
+                    React.createElement('div', { className: 'stat' },
+                      React.createElement('span', { className: 'badge' }, '🏦'),
+                      React.createElement('span', null, '51 insurers offering lowest prices')
+                    ),
+                    React.createElement('div', { className: 'stat' },
+                      React.createElement('span', { className: 'badge' }, '⚡'),
+                      React.createElement('span', null, 'Quick, easy & hassle free')
+                    )
+                  )
+                ),
+                React.createElement(Slider, { items: sliderItems })
+              ),
+              React.createElement('div', { className: 'tiles' },
+                React.createElement(Tile, { emoji: '🛡️', title: 'Term Life Insurance' }),
+                React.createElement(Tile, { emoji: '❤️', title: 'Health Insurance' }),
+                React.createElement(Tile, { emoji: '🚗', title: 'Car Insurance' }),
+                React.createElement(Tile, { emoji: '🛵', title: '2 Wheeler Insurance' }),
+                React.createElement(Tile, { emoji: '👨‍👩‍👧‍👦', title: 'Family Health' }),
+                React.createElement(Tile, { emoji: '✈️', title: 'Travel Insurance' }),
+                React.createElement(Tile, { emoji: '👩', title: 'Term Insurance (Women)' }),
+                React.createElement(Tile, { emoji: '🔁', title: 'Return of Premium' }),
+                React.createElement(Tile, { emoji: '💯', title: 'Guaranteed Return Plans' }),
+                React.createElement(Tile, { emoji: '👶', title: 'Child Savings Plans' }),
+                React.createElement(Tile, { emoji: '👴', title: 'Retirement Plans' }),
+                React.createElement(Tile, { emoji: '🏠', title: 'Home Insurance' })
+              )
+            )
+          )
+        );
+      }
+
+      function Login() {
+        const [email, setEmail] = useState('');
+        const [password, setPassword] = useState('');
+        const [loading, setLoading] = useState(false);
+        const [error, setError] = useState('');
+        const [success, setSuccess] = useState('');
+        async function submit(e) {
+          e.preventDefault();
+          setError('');
+          setSuccess('');
+          setLoading(true);
+          try {
+            const res = await fetch('http://127.0.0.1:8000/api/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+              throw new Error(data?.detail || 'Login failed');
+            }
+            setSuccess('Login successful');
+            setTimeout(() => { window.location.hash = '#/'; }, 700);
+          } catch (err) {
+            setError(err.message || 'Something went wrong');
+          } finally {
+            setLoading(false);
+          }
+        }
+        return (
+          React.createElement('main', null,
+            React.createElement('div', { className: 'container' },
+              React.createElement('div', { className: 'login-wrap card' },
+                React.createElement('h2', null, 'Login'),
+                error ? React.createElement('div', { className: 'muted', style: { color: '#dc2626', marginBottom: 8 } }, error) : null,
+                success ? React.createElement('div', { className: 'muted', style: { color: '#16a34a', marginBottom: 8 } }, success) : null,
+                React.createElement('form', { onSubmit: submit },
+                  React.createElement('label', { className: 'field' },
+                    React.createElement('span', null, 'Email'),
+                    React.createElement('input', { className: 'input', type: 'email', placeholder: 'you@example.com', value: email, onChange: (e) => setEmail(e.target.value) })
+                  ),
+                  React.createElement('label', { className: 'field' },
+                    React.createElement('span', null, 'Password'),
+                    React.createElement('input', { className: 'input', type: 'password', placeholder: '••••••••', value: password, onChange: (e) => setPassword(e.target.value) })
+                  ),
+                  React.createElement('button', { className: 'btn-primary', type: 'submit', disabled: loading }, loading ? 'Signing in…' : 'Continue')
+                )
+              )
+            )
+          )
+        );
+      }
+
+      function App() {
+        const route = useHashRoute();
+        const page = route === '/login' ? React.createElement(Login) : React.createElement(Home);
+        return React.createElement(React.Fragment, null,
+          React.createElement(Nav),
+          page
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(React.createElement(App));
+    </script>
+  </body>
+  </html>
+
+
